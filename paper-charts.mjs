@@ -1,6 +1,6 @@
-import {plotModel,pathFor} from './paper-chart-model.mjs?v=r4v1';
-const colors={tp10:'#8e9eff',tp20:'#50d7ad',tp30:'#ffca7a',tp40:'#ef91c2',tp50:'#66c8f2'};
-const names={tp10:'TP10',tp20:'TP20',tp30:'TP30',tp40:'TP40',tp50:'TP50'};
+import {plotModel,pathFor} from './paper-chart-model.mjs?v=be1v1';
+const colors={tp30:'#ffca7a',tp30be:'#50d7ad'};
+const names={tp30:'TP30 baseline',tp30be:'TP30BE · arm +15%'};
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e};
 const svgNode=(tag,attrs={},text)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e};
 const clock=t=>new Date(t*1000).toLocaleTimeString('en-GB',{timeZone:'UTC',hour:'2-digit',minute:'2-digit'});

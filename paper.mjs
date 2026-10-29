@@ -1,6 +1,6 @@
-import {updateCharts} from './paper-charts.mjs?v=r4v1';
-import {holdModel,pnlModel,entryDelay,formatDuration,formatUTC,formatSOL,formatPercent,safeLinks,selectPositions,countModel} from './paper-table-model.mjs?v=r4v1';
-const feed='https://raw.githubusercontent.com/RamonHitramon/sol100/refs/heads/paper-feed/live-paper.json';
+import {updateCharts} from './paper-charts.mjs?v=be1v1';
+import {holdModel,pnlModel,entryDelay,formatDuration,formatUTC,formatSOL,formatPercent,safeLinks,selectPositions,countModel} from './paper-table-model.mjs?v=be1v1';
+const feed='https://raw.githubusercontent.com/RamonHitramon/sol100be/refs/heads/paper-feed/live-paper.json';
 const $=id=>document.getElementById(id);
 const sol=v=>Number(v).toFixed(3)+' SOL';
 const at=t=>t?new Date(t*1000).toLocaleString('ru-RU',{timeZone:'UTC'})+' UTC':'—';
@@ -13,7 +13,7 @@ function render(){
  $('status').className=stale?'warning':'muted';$('wallets').replaceChildren();
  const active=s.wallets.filter(w=>!w.disabled).length;
  $('active-strategies').textContent=`Активных стратегий: ${active}. Новые коллы → реальные котировки Jupiter → виртуальные сделки; без подбора по будущему максимуму.`;
- $('active-rules').textContent=`Новые входы и выходы: ${active} активных стратегий. Архивные счета не торгуют; их история и замороженные оценки сохранены.`;
+ $('active-rules').textContent=`BE1 — отдельный тест: ${active} независимых свежих счёта. Не продолжение R4. TP30 baseline против TP30BE; данные не заимствуются из R4.`;
  for(const option of $('filter').options){option.dataset??={};option.dataset.label??=option.textContent;option.textContent=option.dataset.label+(s.config?.disabled_strategies?.[option.value]?' · архив':'');}
  for(const w of s.wallets){const card=el('article',undefined,'card');card.append(el('h3',w.name+(w.disabled?' · архив':'')),el('small',w.disabled?'Архив · без новых входов/выходов; оценка заморожена':'Оценка счёта с расходами'),el('div',sol(w.equity_sol),w.disabled?'big muted':'big'),el('div',(w.net_sol>=0?'+':'')+sol(w.net_sol)+' · '+(w.net_sol*100).toFixed(2)+'%',w.disabled?'muted':w.net_sol>=0?'pos':'neg'));if(w.disabled)card.append(el('small','Заморожено: '+formatUTC(w.disabled_at).replace('\n',' · ')));const dl=el('dl');field(dl,'Свободно',sol(w.cash_sol));field(dl,'Реализовано',sol(w.realised_sol));field(dl,'Открыто / закрыто',w.open+' / '+w.closed);field(dl,'Пропущено',w.skipped);if(w.stale)field(dl,'Устаревшие оценки',w.stale);card.append(dl);$('wallets').append(card);}
  renderTrades(s);
@@ -34,7 +34,7 @@ export function renderTrades(s){
   token.title=p.address||'Mint отсутствует';token.append(linksRow);row.append(token);
   const archived=p.strategy_disabled===true||s.wallets.find(w=>w.id===p.strategy)?.disabled||Boolean(s.config?.disabled_strategies?.[p.strategy]);
   const frozen=p.strategy_disabled===true&&p.closed==null;
-  const name=(s.wallets.find(w=>w.id===p.strategy)?.name||p.strategy||'—')+(archived?' · архив':'');const strategy=el('td',name,'strategy-cell');
+  const name=(s.wallets.find(w=>w.id===p.strategy)?.name||p.strategy||'—')+(p.strategy==='tp30be'?(p.armed?' · ARMED':' · не активирован'):'')+(archived?' · архив':'');const strategy=el('td',name,'strategy-cell');
   strategy.title=name;row.append(strategy);
   row.append(el('td',formatUTC(p.signal_at),'utc'),el('td',formatUTC(p.opened),'utc'),el('td',formatDuration(entryDelay(p)),'numeric'));
   const exit=el('td',p.closed==null?(frozen?'FROZEN':'OPEN'):formatUTC(p.closed),p.closed==null?'muted':'utc');exit.title=frozen?'Заморожено: '+formatUTC(p.frozen_at).replace('\n',' · '):p.reason||'Открытая виртуальная позиция';row.append(exit);
